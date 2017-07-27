@@ -1,0 +1,16 @@
+add_library(shapes
+        Shape.h
+        Shape.cpp
+        Triangle.h
+        Triangle.cpp
+        Isosceles.h
+        Isosceles.cpp
+        Rectangle.h
+        Rectangle.cpp
+        Rhombus.h
+        Rhombus.cpp
+        RightTriangle.h
+        RightTriangle.cpp
+        SlotMachine.cpp
+        SlotMachine.h
+        )
