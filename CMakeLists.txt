@@ -10,7 +10,4 @@ include_directories(shapes)
 
 add_subdirectory(shapes)
 
-add_subdirectory(shapes_tests)
-
-
 target_link_libraries(shapes_run shapes)

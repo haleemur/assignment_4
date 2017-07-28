@@ -16,13 +16,13 @@
 void SlotMachine::run()
 {
 	std::cout << "Welcome to this 3-Reel Slot Machine Game!\n"
-              << "Each reel will randomly display one of for shapes, each in 25 sizes.\n"
-              << "To win 3 times your bet you need 3 similar shapes of the same size.\n"
-              << "To win 2 times your bet you need 3 similar shapes.\n"
-              << "To win or lose nothing you need 2 similar shapes.\n"
-              << "Otherwise, you lose your bet.\n"
-              << "You start with 10 free tokens!\n";
-//	int bet = -1;
+		<< "Each reel will randomly display one of for shapes, each in 25 sizes.\n"
+		<< "To win 3 times your bet you need 3 similar shapes of the same size.\n"
+		<< "To win 2 times your bet you need 3 similar shapes.\n"
+		<< "To win or lose nothing you need 2 similar shapes.\n"
+		<< "Otherwise, you lose your bet.\n"
+		<< "You start with 10 free tokens!\n";
+	//	int bet = -1;
 	std::string input;
 	do {
 		try {
@@ -36,22 +36,26 @@ void SlotMachine::run()
 				display_status();
 				release_shapes();
 			}
-		} catch (const std::invalid_argument& e) {
+		}
+		catch (const std::invalid_argument& e) {
 			std::cout << e.what();
 		}
 	} while (bet != 0 && tokens != 0);
 	std::cout << "Game Over. You now have " << tokens << " tokens\n";
+	// prevent console from closing so we can see the end message
+	std::cin.ignore();
+	std::cin.get();
 }
 
-SlotMachine::~SlotMachine()
-{
+SlotMachine::~SlotMachine() {
 	release_shapes();
 }
 
 void SlotMachine::release_shapes()
 {
-	for (auto shape : shape_reel) {
-		delete shape;
+	for (int i = 0; i < 3; ++i) {
+		delete shape_reel.at(i);
+		shape_reel.at(i) = nullptr;
 	}
 }
 
@@ -70,7 +74,7 @@ int SlotMachine::read_input(std::string iput)
 
 void SlotMachine::make_shapes()
 {
-	for (int i=0; i<shape_reel.size(); i++) {
+	for (unsigned int i = 0; i<shape_reel.size(); i++) {
 		make_shape(i);
 	}
 }
@@ -85,14 +89,16 @@ void SlotMachine::make_shape(int r)
 	int shape = shape_dist(gen);
 	int width = size_dist(gen);
 
-	delete shape_reel[r];
 	if (shape == 0) {
 		shape_reel[r] = new Rhombus(width);
-	} else if (shape == 1) {
+	}
+	else if (shape == 1) {
 		shape_reel[r] = new Isosceles(width);
-	} else if (shape == 2) {
+	}
+	else if (shape == 2) {
 		shape_reel[r] = new RightTriangle(width);
-	} else {
+	}
+	else {
 		int height = size_dist(gen);
 		shape_reel[r] = new Rectangle(width, height);
 	}
@@ -101,21 +107,21 @@ void SlotMachine::make_shape(int r)
 void SlotMachine::display_shapes()
 {
 	std::array<std::vector<std::vector<char>>, 3> shapes = {
-			shape_reel[0]->draw(),
-			shape_reel[1]->draw(),
-			shape_reel[2]->draw()};
+		shape_reel[0]->draw(),
+		shape_reel[1]->draw(),
+		shape_reel[2]->draw() };
 
 	std::array<int, 3> widths = {
-			shape_reel[0]->get_bbox_width(),
-			shape_reel[1]->get_bbox_width(),
-			shape_reel[2]->get_bbox_width()
+		shape_reel[0]->get_bbox_width(),
+		shape_reel[1]->get_bbox_width(),
+		shape_reel[2]->get_bbox_width()
 	};
 
 
 	std::array<int, 3> heights = {
-			shape_reel[0]->get_bbox_height(),
-			shape_reel[1]->get_bbox_height(),
-			shape_reel[2]->get_bbox_height()
+		shape_reel[0]->get_bbox_height(),
+		shape_reel[1]->get_bbox_height(),
+		shape_reel[2]->get_bbox_height()
 	};
 
 
@@ -125,17 +131,18 @@ void SlotMachine::display_shapes()
 
 	display_boundary(widths);
 
-	for (int i=0; i<height; ++i) {
+	for (int i = 0; i<height; ++i) {
 
-		for (int j=0; j<3; j++) {
+		for (int j = 0; j<3; j++) {
 			std::cout << "| "; // lpad
 			if (i < heights[j]) {
 				// print row i of shape j
-				for (int k=0; k < widths[j]; ++k) {
+				for (int k = 0; k < widths[j]; ++k) {
 					std::cout << shapes[j].at(i).at(k);
 				}
-			} else {
-				for (int k=0; k < widths[j]; ++k) {
+			}
+			else {
+				for (int k = 0; k < widths[j]; ++k) {
 					std::cout << " ";
 				}
 			}
@@ -148,8 +155,8 @@ void SlotMachine::display_shapes()
 
 	for (auto shape : shape_reel) {
 		std::cout << "(" << shape->get_name()
-		          << ", " << shape->get_bbox_width()
-		          << ", " << shape->get_bbox_height() << ") ";
+			<< ", " << shape->get_bbox_width()
+			<< ", " << shape->get_bbox_height() << ") ";
 	}
 	std::cout << "\n";
 
@@ -158,16 +165,19 @@ void SlotMachine::display_shapes()
 void SlotMachine::evaluate_bet()
 {
 	if (shape_reel[0] == shape_reel[1]
-	    && shape_reel[0] == shape_reel[2]) {
+		&& shape_reel[0] == shape_reel[2]) {
 		result = 3;
-	} else if (shape_reel[0]->get_name() == shape_reel[1]->get_name()
-			&& shape_reel[0]->get_name() == shape_reel[2]->get_name()) {
+	}
+	else if (shape_reel[0]->get_name() == shape_reel[1]->get_name()
+		&& shape_reel[0]->get_name() == shape_reel[2]->get_name()) {
 		result = 2;
-	} else if (shape_reel[0]->get_name() == shape_reel[1]->get_name()
-            || shape_reel[0]->get_name() == shape_reel[2]->get_name()
-            || shape_reel[1]->get_name() == shape_reel[2]->get_name()) {
+	}
+	else if (shape_reel[0]->get_name() == shape_reel[1]->get_name()
+		|| shape_reel[0]->get_name() == shape_reel[2]->get_name()
+		|| shape_reel[1]->get_name() == shape_reel[2]->get_name()) {
 		result = 0;
-	} else {
+	}
+	else {
 		result = -1;
 	}
 	tokens += (result * bet);
@@ -177,9 +187,11 @@ void SlotMachine::display_status()
 {
 	if (result == 0) {
 		std::cout << "You don't win, you don't lose, you are safe\n";
-	} else if (result == -1) {
+	}
+	else if (result == -1) {
 		std::cout << "You lose your bet\n";
-	} else {
+	}
+	else {
 		std::cout << "Congratulations! You win " << result << " times your bet: " << bet << "\n";
 	}
 	std::cout << "You have " << tokens << " tokens!\n";
@@ -187,9 +199,9 @@ void SlotMachine::display_status()
 
 void SlotMachine::display_boundary(std::array<int, 3> widths) const
 {
-	for (auto width :widths) {
+	for (auto width : widths) {
 		std::cout << "+-";
-		for (int i=0; i<width;++i) {
+		for (int i = 0; i<width; ++i) {
 			std::cout << '-';
 		}
 		std::cout << "-";
